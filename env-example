@@ -1,0 +1,20 @@
+### GLOBAL ###############################################
+COMPOSE_PROJECT_NAME=jupyterhub
+DATA_PATH_HOST=./data
+
+### JUPYTERHUB ###############################################
+JUPYTERHUB_INTERNAL_POSTGRES=true
+JUPYTERHUB_POSTGRES_HOST=postgres
+JUPYTERHUB_POSTGRES_USER=jupyterhub
+JUPYTERHUB_POSTGRES_PASSWORD=jupyterhub
+JUPYTERHUB_POSTGRES_DB=jupyterhub
+JUPYTERHUB_PORT=9991
+JUPYTERHUB_OAUTH_CALLBACK_URL=http://example.com:9991/hub/oauth_callback
+JUPYTERHUB_OAUTH_CLIENT_ID={GITHUB_CLIENT_ID}
+JUPYTERHUB_OAUTH_CLIENT_SECRET={GITHUB_CLIENT_SECRET}
+JUPYTERHUB_USER_DATA=/opt/jupyterhub-user-data
+JUPYTERHUB_LOCAL_NOTEBOOK_IMAGE=ahkui/jupyter:latest
+CONFIGPROXY_AUTH_TOKEN={GENERATE_NEW_TOKEN}
+
+### Jupyter Notebook Network
+DOCKER_NETWORK_NAME=jupyterhub_default
