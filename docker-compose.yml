@@ -2,23 +2,17 @@ version: '3'
 
 networks:
   default:
-    driver: overlay
-    ipam:
-      config:
-        - subnet: 10.0.30.0/24
-
   db-net:
-    driver: bridge
-
-#   reversed-proxy-network:
-#     external:
-#       name: proxy-network
+  external-network:
+    external:
+      name: External
 
 services:
   postgres:
     image: postgres
+    container_name: postgresql
     volumes:
-      - ${DATA_PATH_HOST}/postgres:/var/lib/postgresql/data
+      - /data/JupyterHub/postgres:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=${JUPYTERHUB_POSTGRES_DB}
       - POSTGRES_USER=${JUPYTERHUB_POSTGRES_USER}
@@ -27,28 +21,31 @@ services:
     command: ["${JUPYTERHUB_INTERNAL_POSTGRES} && docker-entrypoint.sh postgres"]
     networks:
       - db-net
+    restart: always
 
   jupyterhub:
+    container_name: jupyterhub
     image: ahkui/jupyterhub:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:rw
-      - ${DATA_PATH_HOST}/jupyterhub/data/:/data
-      - ${DATA_PATH_HOST}/jupyterhub/user-data/:/user-data
-      - ./jupyterhub/admin.txt:/root/.jupyter/admin.txt
-    ports:
-      - "${JUPYTERHUB_PORT}:80"
+      - /data/JupyterHub/data:/data
+      - /data/JupyterHub/user-data:/user-data
+      - /data/JupyterHub/admin.txt:/root/.jupyter/admin.txt
+      - /data/JupyterHub/jupyterhub_config.py:/root/.jupyter/jupyterhub_config.py
+      - /data/JupyterHub/shared.json:/root/.jupyter/shared.json
     env_file: .env
-    depends_on:
-      - postgres
     networks:
       - default
       - db-net
-#       - reversed-proxy-network
+      - external-network
+    restart: always
 
   jupyter-proxy:
+    container_name: jupyter_proxy
     image: nginx:alpine
     volumes:
       - ./nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
     networks:
       - default
-#       - reversed-proxy-network
+      - external-network
+    restart: always

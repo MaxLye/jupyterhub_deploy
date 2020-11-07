@@ -158,4 +158,4 @@ with open(os.path.join('/root/.jupyter/', 'admin.txt')) as f:
 #        whitelist.add(name)
         if len(parts) > 1 and parts[1] == 'admin':
             admin.add(name)
-admin.add('ahkui')
+admin.add('maxlye')
